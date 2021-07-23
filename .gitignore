@@ -1,10 +1,5 @@
 /Debug
-/results0.vtk
-/results10000.vtk
-/results2000.vtk
-/results4000.vtk
-/results6000.vtk
-/results8000.vtk
-/Stokes1stProblem.vcxproj
-/Stokes1stProblem.vcxproj.filters
-/Stokes1stProblem.vcxproj.user
+/*.vtk
+/*.vcxproj
+/*.vcxproj.filters
+/*.vcxproj.user
