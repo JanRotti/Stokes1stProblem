@@ -30,7 +30,7 @@ int main()
 	double deltaX = 0.005;									//grid spacing
 	double epsilon = 1e-8;									//geometrical tolerance
 	long nx = ceil(length / deltaX + epsilon) + 1;			//number of nodes in x direction
-	long ny = ceil(2 * height / deltaX + epsilon) + 1;		//number of nodes in y direction
+	long ny = ceil(height / deltaX + epsilon) + 1;			//number of nodes in y direction
 
 	//--------------------------------- FLUID PARAMETERS -----------------------------------//
 	double rho = 900;										//fluid density [kg/m^3] 
@@ -41,8 +41,8 @@ int main()
 	double maxExpectedVelocity = wallVelocity;				//max. expected velocity
 	
 	//-------------------------------- TIME CONFIGURATION ----------------------------------//
-	long timeSteps = 10000;									//time steps 
-	long writeInterval = 2000;								//writing intervall
+	long timeSteps = 1000000;								//time steps 
+	long writeInterval = 20000;								//writing intervall
 	double deltaT = 5e-5;									//time step
 	double finalTime = deltaT * timeSteps;					//final time
 
@@ -556,6 +556,20 @@ int main()
 			cout << "] " << int(progress * 100.0) << " %\r";
 			cout.flush();
 		}
+
+
+		//----------------------------- CONVERGENCE CRITERIA -------------------------------//
+		// deviation to analytical solution
+		int k = nx / 2;
+		double analyticalSolution = 0;
+		// mse error
+		double error = 0;
+		// iterate y-direction
+		for (int l = 1; l < ny - 1; l++) {
+			analyticalSolution = wallVelocity - wallVelocity;
+			error += pow(analyticalSolution - fluidVelocity[k][l][0],2);
+		}
+
 	}//end time loop 
 	
 	 

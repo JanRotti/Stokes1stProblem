@@ -7,3 +7,6 @@ Boundary conditions:
   - Top: specular reflection
   - Bottom: bounce back with fixed wall velocity
   - Left+Right: periodict boundary with no overlap
+
+Mesh:
+![Mesh](/img/Mesh.png)
