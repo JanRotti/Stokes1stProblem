@@ -535,10 +535,10 @@ int main()
 		if (t % writeInterval == 0) {
 			writeResults(t, deltaT, nx, ny, deltaX, fluidDensity, speedOfSound, fluidVelocity);
 		}
-		// progress bar
+		// progress bar and analytical error
 		float progress = t / float(timeSteps);
 		// update on every progress percent
-		if (t % (timeSteps / 100) == 0) {
+		if (t %  100 == 0) {
 			int barWidth = 40;
 			cout << "[";
 			int pos = barWidth * progress;
@@ -553,23 +553,20 @@ int main()
 					cout << " ";
 				}
 			}//end for
-			cout << "] " << int(progress * 100.0) << " %\r";
+			cout << "] " << int(progress * 100.0) << " %\t";
+
+			//--------------------------- CONVERGENCE CRITERIA -----------------------------//
+			// deviation to analytical solution
+			int k = nx / 2;
+			double analyticalSolution = 0;
+			// compute y coordinates
+			double error = 0;
+			for(int l = 1; l < ny - 1;l++){
+				error += fluidVelocity[k][l][0] - (wallVelocity - wallVelocity * erf(deltaX * l / (2 * sqrt(viscosity * (t * deltaT)))));
+			}
+			cout << "Analytical Error:\t" << error <<"\r" ;
 			cout.flush();
-		}
-
-
-		//----------------------------- CONVERGENCE CRITERIA -------------------------------//
-		// deviation to analytical solution
-		int k = nx / 2;
-		double analyticalSolution = 0;
-		// mse error
-		double error = 0;
-		// iterate y-direction
-		for (int l = 1; l < ny - 1; l++) {
-			analyticalSolution = wallVelocity - wallVelocity;
-			error += pow(analyticalSolution - fluidVelocity[k][l][0],2);
-		}
-
+		}//end if
 	}//end time loop 
 	
 	 

@@ -9,4 +9,5 @@ Boundary conditions:
   - Left+Right: periodict boundary with no overlap
 
 Mesh:
+
 ![Mesh](/img/Mesh.png)
