@@ -26,8 +26,8 @@ int main()
 
 	//------------------------------- GEOMETRIC DEFINITION ---------------------------------//
 	double height = 2;										//domain height in [m]
-	double length = 0.5;									//domain width
-	double deltaX = 0.005;									//grid spacing
+	double length = 0.5;									//domain width in [m]
+	double deltaX = 0.01;									//grid spacing in [m]
 	double epsilon = 1e-8;									//geometrical tolerance
 	long nx = ceil(length / deltaX + epsilon) + 1;			//number of nodes in x direction
 	long ny = ceil(height / deltaX + epsilon) + 1;			//number of nodes in y direction
@@ -41,9 +41,9 @@ int main()
 	double maxExpectedVelocity = wallVelocity;				//max. expected velocity
 	
 	//-------------------------------- TIME CONFIGURATION ----------------------------------//
-	long timeSteps = 1000000;								//time steps 
-	long writeInterval = 20000;								//writing intervall
-	double deltaT = 5e-5;									//time step
+	long timeSteps = 10000;								//time steps 
+	long writeInterval = 1000;								//writing intervall
+	double deltaT = 5e-5; //5e-5;							//time step
 	double finalTime = deltaT * timeSteps;					//final time
 
 
@@ -562,9 +562,11 @@ int main()
 			// compute y coordinates
 			double error = 0;
 			for(int l = 1; l < ny - 1;l++){
-				error += fluidVelocity[k][l][0] - (wallVelocity - wallVelocity * erf(deltaX * l / (2 * sqrt(viscosity * (t * deltaT)))));
+				error += abs(fluidVelocity[k][l][0] - (wallVelocity - wallVelocity * erf(deltaX * (float(l) - 0.5) / (2 * sqrt(viscosity * (t * deltaT))))));
 			}
-			cout << "Analytical Error:\t" << error <<"\r" ;
+			//normalize error
+			error /= (ny - 2);
+			cout << "Analytical Error:\t" << error << "      " << "\r";
 			cout.flush();
 		}//end if
 	}//end time loop 
