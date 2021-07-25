@@ -41,8 +41,8 @@ int main()
 	double maxExpectedVelocity = wallVelocity;				//max. expected velocity
 	
 	//-------------------------------- TIME CONFIGURATION ----------------------------------//
-	long timeSteps = 10000;								//time steps 
-	long writeInterval = 1000;								//writing intervall
+	long timeSteps = 10000;									//time steps 
+	long writeInterval = 500;								//writing intervall
 	double deltaT = 5e-5; //5e-5;							//time step
 	double finalTime = deltaT * timeSteps;					//final time
 
@@ -203,7 +203,12 @@ int main()
 	// 							LATTICE BOLTZMANN ALGORITHM									//
 	//--------------------------------------------------------------------------------------//
 	
-
+	// error history
+	fstream errorFile;
+	// open error file
+	remove("history.txt");
+	errorFile.open("history.txt");
+	
 	// start time
 	long t = 0;
 
@@ -526,7 +531,7 @@ int main()
 					// update distribution with Bhatnagar-Gross-Krook model 
 					distribution[k][l][1][i] = distribution[k][l][0][i] + omega * (eqDistribution - distribution[k][l][0][i]); 
 				}//end i
-			} //end l
+			}//end l
 		}//end k
 
 
@@ -537,6 +542,22 @@ int main()
 		}
 		// progress bar and analytical error
 		float progress = t / float(timeSteps);
+
+		//--------------------------- CONVERGENCE CRITERIA -----------------------------//
+		// deviation to analytical solution
+		int k = nx / 2;
+		double analyticalSolution = 0;
+		// compute y coordinates
+		double error = 0;
+		for(int l = 1; l < ny - 1;l++){
+			error += abs(fluidVelocity[k][l][0] - (wallVelocity - wallVelocity * erf(deltaX * (float(l) - 0.5) / (2 * sqrt(viscosity * (t * deltaT))))));
+		}
+		// normalize error
+		error /= (ny - 2);
+
+		// write to error file
+		errorFile << (t * deltaT) << ", " << error << endl;
+
 		// update on every progress percent
 		if (t %  100 == 0) {
 			int barWidth = 40;
@@ -554,18 +575,6 @@ int main()
 				}
 			}//end for
 			cout << "] " << int(progress * 100.0) << " %\t";
-
-			//--------------------------- CONVERGENCE CRITERIA -----------------------------//
-			// deviation to analytical solution
-			int k = nx / 2;
-			double analyticalSolution = 0;
-			// compute y coordinates
-			double error = 0;
-			for(int l = 1; l < ny - 1;l++){
-				error += abs(fluidVelocity[k][l][0] - (wallVelocity - wallVelocity * erf(deltaX * (float(l) - 0.5) / (2 * sqrt(viscosity * (t * deltaT))))));
-			}
-			//normalize error
-			error /= (ny - 2);
 			cout << "Analytical Error:\t" << error << "      " << "\r";
 			cout.flush();
 		}//end if
