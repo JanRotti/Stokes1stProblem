@@ -37,7 +37,7 @@ int main()
 	double viscosity = 3e-3;								//kinematic fluid viscosity
 
 	//--------------------------------- FLOW PARAMETERS ------------------------------------//						 
-	double wallVelocity = 1e-3;								//wall velocity at bottom plate
+	double wallVelocity = 3e-3;								//wall velocity at bottom plate
 	double maxExpectedVelocity = wallVelocity;				//max. expected velocity
 	
 	//-------------------------------- TIME CONFIGURATION ----------------------------------//
@@ -203,10 +203,10 @@ int main()
 	// 							LATTICE BOLTZMANN ALGORITHM									//
 	//--------------------------------------------------------------------------------------//
 	
-	// error history
-	fstream errorFile;
-	// open error file
 	remove("history.txt");
+	// error history
+	ofstream errorFile;
+	// open error file
 	errorFile.open("history.txt");
 	
 	// start time
@@ -557,7 +557,7 @@ int main()
 
 		// write to error file
 		errorFile << (t * deltaT) << ", " << error << endl;
-
+		
 		// update on every progress percent
 		if (t %  100 == 0) {
 			int barWidth = 40;
@@ -579,8 +579,10 @@ int main()
 			cout.flush();
 		}//end if
 	}//end time loop 
+	// close history file
+	errorFile.close();
 	
-	 
-	 //write final result
+
+	//write final result
 	writeResults(t, deltaT, nx, ny, deltaX, fluidDensity, speedOfSound, fluidVelocity);
 }//end main
